@@ -34,6 +34,7 @@ class YAMLCppConan(ConanFile):
 
     def build(self):
         self.__inject_conan()
+        self.__disable_warnings()
         shared = {"BUILD_SHARED_LIBS": self.options.shared}
         cmake = CMake(self.settings)
         cmake.configure(self, source_dir=self.release_name, defs=shared)
@@ -47,6 +48,14 @@ class YAMLCppConan(ConanFile):
         '''
         replace_in_file("%s/CMakeLists.txt" % self.release_name,
                         "project(YAML_CPP)", conan_magic_lines)
+
+    def __disable_warnings(self):
+        conan_magic_lines = '''
+        set(GCC_EXTRA_OPTIONS "")
+        set(CMAKE_CXX_FLAGS "-Wno-deprecated-declarations ${CMAKE_CXX_FLAGS}")
+        '''
+        replace_in_file("%s/CMakeLists.txt" % self.release_name,
+                        'set(GCC_EXTRA_OPTIONS "")', conan_magic_lines)
 
     def package(self):
         self.copy(
