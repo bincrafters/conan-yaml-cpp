@@ -18,11 +18,16 @@ class YAMLCppConan(ConanFile):
     generators = "cmake", "txt"
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False]}
-    default_options = "shared=True"
+    default_options = "shared=False"
     url = "https://github.com/uilianries/conan-yaml-cpp"
     author = "Uilian Ries <uilianries@gmail.com>"
     license = "MIT"
+    description = "A YAML parser and emitter in C++"
     release_name = "%s-release-%s" % (name, version)
+
+    def configure(self):
+        if self.settings.os == "Windows" and self.settings.compiler == "Visual Studio" and self.options.shared:
+            raise Exception("YAML Cpp 0.3.0 is only supported as -static for MSVC")
 
     def source(self):
         tar_name = "release-%s.tar.gz" % self.version
@@ -35,13 +40,15 @@ class YAMLCppConan(ConanFile):
     def build(self):
         self.__inject_conan()
         self.__disable_warnings()
-        shared = {
+        definitions = {
             "BUILD_SHARED_LIBS": self.options.shared,
             "YAML_CPP_BUILD_CONTRIB": True,
             "YAML_CPP_BUILD_TOOLS": False
         }
+        if self.settings.os == "Windows" and self.options.shared:
+            definitions["CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS"] = True
         cmake = CMake(self.settings)
-        cmake.configure(self, source_dir=self.release_name, defs=shared)
+        cmake.configure(self, source_dir=self.release_name, defs=definitions)
         cmake.build(self)
 
     def __inject_conan(self):
@@ -72,7 +79,21 @@ class YAMLCppConan(ConanFile):
             src="lib",
             keep_path=False)
         self.copy(pattern="lib%s.so*" % self.name, dst="lib", keep_path=False)
-        self.copy(pattern="lib%s*.dylib" % self.name, dst="lib", keep_path=False)
+        self.copy(
+            pattern="lib%s*.dylib" % self.name, dst="lib", keep_path=False)
+        self.copy(
+            pattern="*%s*.lib" % self.name,
+            dst="lib",
+            src="lib")
+        self.copy(
+            pattern="%s.dll" % self.name,
+            dst="bin",
+            src="bin")
 
     def package_info(self):
-        self.cpp_info.libs = ['yaml-cpp']
+        lib_name = self.name
+        if self.settings.os == "Windows" and not self.options.shared:
+            lib_name = "lib%smd" % self.name
+            if self.settings.build_type == "Debug":
+                lib_name += "d"
+        self.cpp_info.libs = [lib_name]
