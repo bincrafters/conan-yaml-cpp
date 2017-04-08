@@ -35,7 +35,7 @@ class YAMLCppConan(ConanFile):
     def build(self):
         self.__inject_conan()
         self.__disable_warnings()
-        shared = {"BUILD_SHARED_LIBS": self.options.shared}
+        shared = {"BUILD_SHARED_LIBS": self.options.shared, "YAML_CPP_BUILD_CONTRIB": True, "YAML_CPP_BUILD_TOOLS": False}
         cmake = CMake(self.settings)
         cmake.configure(self, source_dir=self.release_name, defs=shared)
         cmake.build(self)
