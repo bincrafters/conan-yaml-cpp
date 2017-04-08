@@ -7,7 +7,7 @@ if [[ "$(uname -s)" == 'Darwin' ]]; then
     brew update || brew update
     brew outdated pyenv || brew upgrade pyenv
     brew install pyenv-virtualenv
-    brew install libtool
+    brew install libtool || true
     brew install cmake || true
 
     if which pyenv > /dev/null; then

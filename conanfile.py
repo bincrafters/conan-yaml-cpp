@@ -35,7 +35,11 @@ class YAMLCppConan(ConanFile):
     def build(self):
         self.__inject_conan()
         self.__disable_warnings()
-        shared = {"BUILD_SHARED_LIBS": self.options.shared, "YAML_CPP_BUILD_CONTRIB": True, "YAML_CPP_BUILD_TOOLS": False}
+        shared = {
+            "BUILD_SHARED_LIBS": self.options.shared,
+            "YAML_CPP_BUILD_CONTRIB": True,
+            "YAML_CPP_BUILD_TOOLS": False
+        }
         cmake = CMake(self.settings)
         cmake.configure(self, source_dir=self.release_name, defs=shared)
         cmake.build(self)
@@ -62,8 +66,13 @@ class YAMLCppConan(ConanFile):
             pattern="*.h",
             dst="include",
             src=join(self.release_name, "include"))
-        self.copy(pattern="*.a", dst="lib", keep_path=False)
-        self.copy(pattern="*.so*", dst="lib", keep_path=False)
+        self.copy(
+            pattern="lib%s.a" % self.name,
+            dst="lib",
+            src="lib",
+            keep_path=False)
+        self.copy(pattern="lib%s.so*" % self.name, dst="lib", keep_path=False)
+        self.copy(pattern="lib%s*.dylib" % self.name, dst="lib", keep_path=False)
 
     def package_info(self):
         self.cpp_info.libs = ['yaml-cpp']

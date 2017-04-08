@@ -1,5 +1,6 @@
 """Recipe validation for yaml-cpp-0.3.0
 """
+from os import environ
 from os import getenv
 from conans import ConanFile, CMake
 
@@ -25,10 +26,12 @@ class TestYAMLCppConan(ConanFile):
         cmake.build(self)
 
     def imports(self):
-        self.copy(pattern="*.so*", dst="bin", src="lib")
+        self.copy(pattern="lib%s.so*" % self.target, dst="bin", src="lib")
+        self.copy(pattern="lib%s*.dylib" % self.target, dst="bin", src="lib")
 
     def test(self):
         cmake = CMake(self.settings)
         cmake.configure(
             self, source_dir=self.conanfile_directory, build_dir="./")
+        environ["CTEST_OUTPUT_ON_FAILURE"] = "TRUE"
         cmake.build(self, target="test")
