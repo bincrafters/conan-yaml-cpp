@@ -27,6 +27,7 @@ class TestYAMLCppConan(ConanFile):
 
     def imports(self):
         self.copy(pattern="lib%s.so*" % self.target, dst="bin", src="lib")
+        self.copy(pattern="%s.dll" % self.target, dst="bin", src="bin")
         self.copy(pattern="lib%s*.dylib" % self.target, dst="bin", src="lib")
 
     def test(self):
@@ -34,4 +35,5 @@ class TestYAMLCppConan(ConanFile):
         cmake.configure(
             self, source_dir=self.conanfile_directory, build_dir="./")
         environ["CTEST_OUTPUT_ON_FAILURE"] = "TRUE"
-        cmake.build(self, target="test")
+        target = "RUN_TESTS" if self.settings.os == "Windows" else "test"
+        cmake.build(self, target=target)

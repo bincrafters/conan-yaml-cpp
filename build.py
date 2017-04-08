@@ -17,4 +17,10 @@ if __name__ == "__main__":
                 _settings["compiler.libcxx"] = "libstdc++11"
                 stdlibcpp11_builds.append([_settings, options])
         builder.builds = builder.builds + stdlibcpp11_builds
+    elif system() == "Windows":
+        windows_builds = []
+        for settings, options in builder.builds:
+            if not options["yaml-cpp:shared"] or not settings["compiler"] == "Visual Studio":
+                windows_builds.append([settings, options])
+        builder.builds = windows_builds
     builder.run()
