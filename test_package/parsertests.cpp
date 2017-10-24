@@ -1,8 +1,7 @@
 #include "tests.h"
-#include "yaml-cpp/yaml.h"
+#include "yaml.h"
 #include <sstream>
 #include <algorithm>
-#include <iostream>
 
 namespace Test
 {
@@ -133,11 +132,14 @@ namespace Test
 			parser.GetNextDocument(doc);
 
 			std::string output;
-			if(doc[0].to<std::string>() != "eggs")
+			doc[0] >> output;
+			if(output != "eggs")
 				return false;
-			if(doc[1].to<std::string>() != "bread")
+			doc[1] >> output;
+			if(output != "bread")
 				return false;
-			if(doc[2].to<std::string>() != "milk")
+			doc[2] >> output;
+			if(output != "milk")
 				return false;
 
 			return true;
@@ -470,7 +472,7 @@ namespace Test
 		
 		bool AliasAsSimpleKey()
 		{
-			std::string input = "- &a b\n- *a : c";
+			std::string input = "- &a b\n- *a: c";
 			
 			std::stringstream stream(input);
 			YAML::Parser parser(stream);
@@ -624,7 +626,7 @@ namespace Test
 				return false;
 			if(!IsNull(doc["key"]))
 			   return false;
-			if(doc["just a key"].to<std::string>() != "value")
+			if(doc["just a key"] != "value")
 				return false;
 			
 			return true;
@@ -645,13 +647,13 @@ namespace Test
 			parser.GetNextDocument(doc);
 			if(doc.size() != 4)
 				return false;
-			if(doc[0].to<int>() != 15)
+			if(doc[0] != 15)
 				return false;
-			if(doc[1].to<int>() != 0x10)
+			if(doc[1] != 0x10)
 				return false;
-			if(doc[2].to<int>() != 030)
+			if(doc[2] != 030)
 				return false;
-			if(doc[3].to<unsigned>() != 0xffffffff)
+			if(doc[3] != 0xffffffff)
 				return false;
 			return true;
 		}
@@ -667,21 +669,21 @@ namespace Test
 			try {
 				doc["bad key"];
 			} catch(const YAML::Exception& e) {
-				if(e.msg != std::string(YAML::ErrorMsg::KEY_NOT_FOUND) + ": bad key")
+				if(e.msg != YAML::ErrorMsg::KEY_NOT_FOUND + ": bad key")
 					throw;
 			}
 
 			try {
 				doc[5];
 			} catch(const YAML::Exception& e) {
-				if(e.msg != std::string(YAML::ErrorMsg::KEY_NOT_FOUND) + ": 5")
+				if(e.msg != YAML::ErrorMsg::KEY_NOT_FOUND + ": 5")
 					throw;
 			}
 
 			try {
 				doc[2.5];
 			} catch(const YAML::Exception& e) {
-				if(e.msg != std::string(YAML::ErrorMsg::KEY_NOT_FOUND) + ": 2.5")
+				if(e.msg != YAML::ErrorMsg::KEY_NOT_FOUND + ": 2.5")
 					throw;
 			}
 
@@ -696,246 +698,15 @@ namespace Test
 			YAML::Node doc;
 			parser.GetNextDocument(doc);
 			
-			if(doc["a"].to<int>() != 4)
+			if(doc["a"] != 1)
 				return false;
-			if(doc["b"].to<int>() != 2)
+			if(doc["b"] != 2)
 				return false;
-			if(doc["c"].to<int>() != 3)
-				return false;
-			return true;
-		}
-		
-		void PrepareNodeForTagExam(YAML::Node& doc, const std::string& input)
-		{
-			std::stringstream stream(input);
-			YAML::Parser parser(stream);
-			parser.GetNextDocument(doc);
-		}
-		
-		struct TagMismatch: public std::exception {
-			TagMismatch(const std::string& actualTag, const std::string& expectedTag) {
-				std::stringstream output;
-				output << "Tag has value \"" << actualTag << "\" but \"" << expectedTag << "\" was expected";
-				what_ = output.str();
-			}
-			virtual ~TagMismatch() throw() {}
-			virtual const char *what() const throw() { return what_.c_str(); }
-			
-		private:
-			std::string what_;
-		};
-		
-		bool ExpectedTagValue(YAML::Node& node, const char* tag)
-		{
-			if(node.Tag() == tag)
-			  return true;
-			
-			throw TagMismatch(node.Tag(), tag);
-		}
-		
-		bool DefaultPlainScalarTag()
-		{
-			YAML::Node node;
-			PrepareNodeForTagExam(node, "--- 12");
-
-			return ExpectedTagValue(node, "?");
-		}
-		
-		bool DefaultSingleQuotedScalarTag()
-		{
-			YAML::Node node;
-			PrepareNodeForTagExam(node, "--- '12'");
-			
-			return ExpectedTagValue(node, "!");
-		}
-		
-		bool ExplicitNonSpecificPlainScalarTag()
-		{
-			YAML::Node node;
-			PrepareNodeForTagExam(node, "--- ! 12");
-			
-			return ExpectedTagValue(node, "!");
-		}
-		
-		bool BasicLocalTag()
-		{
-			YAML::Node node;
-			PrepareNodeForTagExam(node, "--- !foo 12");
-			
-			return ExpectedTagValue(node, "!foo");
-		}
-		
-		bool VerbatimLocalTag()
-		{
-			YAML::Node node;
-			PrepareNodeForTagExam(node, "--- !<!foo> 12");
-			
-			return ExpectedTagValue(node, "!foo");
-		}
-		
-		bool StandardShortcutTag()
-		{
-			YAML::Node node;
-			PrepareNodeForTagExam(node, "--- !!int 12");
-			
-			return ExpectedTagValue(node, "tag:yaml.org,2002:int");
-		}
-		
-		bool VerbatimURITag()
-		{
-			YAML::Node node;
-			PrepareNodeForTagExam(node, "--- !<tag:yaml.org,2002:int> 12");
-			
-			return ExpectedTagValue(node, "tag:yaml.org,2002:int");
-		}
-		
-		bool DefaultSequenceTag()
-		{
-			YAML::Node node;
-			PrepareNodeForTagExam(node, "--- [12]");
-			
-			return ExpectedTagValue(node, "?");
-		}
-		
-		bool ExplicitNonSpecificSequenceTag()
-		{
-			YAML::Node node;
-			PrepareNodeForTagExam(node, "--- ! [12]");
-			
-			return ExpectedTagValue(node, "!");
-		}
-		
-		bool Infinity()
-		{
-			std::string input =
-			"- .inf\n"
-			"- .Inf\n"
-			"- .INF\n"
-			"- +.inf\n"
-			"- +.Inf\n"
-			"- +.INF\n"
-			"- -.inf\n"
-			"- -.Inf\n"
-			"- -.INF\n";
-			std::stringstream stream(input);
-			YAML::Parser parser(stream);
-			YAML::Node doc;
-			parser.GetNextDocument(doc);
-			
-			for(unsigned i=0;i<doc.size();i++)
-				if(doc[i].to<double>() != (i < 6 ? +1 : -1) * std::numeric_limits<double>::infinity())
-					return false;
-			for(unsigned i=0;i<doc.size();i++)
-				if(doc[i].to<long double>() != (i < 6 ? +1 : -1) * std::numeric_limits<long double>::infinity())
-					return false;
-			for(unsigned i=0;i<doc.size();i++)
-				if(doc[i].to<float>() != (i < 6 ? +1 : -1) * std::numeric_limits<float>::infinity())
-					return false;
-			return true;
-		}
-
-		bool NaN()
-		{
-			std::string input =
-			"- .nan\n"
-			"- .NaN\n"
-			"- .NAN\n";
-			std::stringstream stream(input);
-			YAML::Parser parser(stream);
-			YAML::Node doc;
-			parser.GetNextDocument(doc);
-			
-			for(unsigned i=0;i<doc.size();i++) {
-				double d;
-				doc[i] >> d;
-				if(d == d)
-					return false;
-			}
-			for(unsigned i=0;i<doc.size();i++) {
-				long double d;
-				doc[i] >> d;
-				if(d == d)
-					return false;
-			}
-			for(unsigned i=0;i<doc.size();i++) {
-				float d;
-				doc[i] >> d;
-				if(d == d)
-					return false;
-			}
-			return true;
-		}
-		
-		bool NonConstKey()
-		{
-			std::string input = "{a: 1}";
-			std::stringstream stream(input);
-			YAML::Parser parser(stream);
-			YAML::Node doc;
-			parser.GetNextDocument(doc);
-			
-			std::vector<char> key(2);
-			key[0] = 'a';
-			key[1] = '\0';
-			if(doc[&key[0]].to<int>() != 1)
+			if(doc["c"] != 3)
 				return false;
 			return true;
 		}
-		
-		bool SingleChar()
-		{
-			std::string input = "5";
-			std::stringstream stream(input);
-			YAML::Parser parser(stream);
-			YAML::Node doc;
-			parser.GetNextDocument(doc);
-			
-			return doc.to<int>() == 5;
-		}
-        
-        bool QuotedNewline()
-        {
-            std::string input = "foo: \"\\n\"";
-			std::stringstream stream(input);
-			YAML::Parser parser(stream);
-			YAML::Node doc;
-			parser.GetNextDocument(doc);
-			
-			return doc["foo"].to<std::string>() == "\n";
-        }
-
-        bool DoubleAsInt()
-		{
-			std::string input = "1.5";
-			std::stringstream stream(input);
-			YAML::Parser parser(stream);
-			YAML::Node doc;
-			parser.GetNextDocument(doc);
-			
-            try {
-                doc.to<int>();
-            } catch(const YAML::InvalidScalar& e) {
-                return true;
-            }
-            
-            return false;
-		}
-        
-        bool Binary()
-        {
-            std::string input = "[!!binary \"SGVsbG8sIFdvcmxkIQ==\", !!binary \"TWFuIGlzIGRpc3Rpbmd1aXNoZWQsIG5vdCBvbmx5IGJ5IGhpcyByZWFzb24sIGJ1dCBieSB0aGlzIHNpbmd1bGFyIHBhc3Npb24gZnJvbSBvdGhlciBhbmltYWxzLCB3aGljaCBpcyBhIGx1c3Qgb2YgdGhlIG1pbmQsIHRoYXQgYnkgYSBwZXJzZXZlcmFuY2Ugb2YgZGVsaWdodCBpbiB0aGUgY29udGludWVkIGFuZCBpbmRlZmF0aWdhYmxlIGdlbmVyYXRpb24gb2Yga25vd2xlZGdlLCBleGNlZWRzIHRoZSBzaG9ydCB2ZWhlbWVuY2Ugb2YgYW55IGNhcm5hbCBwbGVhc3VyZS4K\"]";
-			std::stringstream stream(input);
-			YAML::Parser parser(stream);
-			YAML::Node doc;
-			parser.GetNextDocument(doc);
-            
-            if(doc[0].to<YAML::Binary>() != YAML::Binary(reinterpret_cast<const unsigned char*>("Hello, World!"), 13))
-                return false;
-            if(doc[1].to<YAML::Binary>() != YAML::Binary(reinterpret_cast<const unsigned char*>("Man is distinguished, not only by his reason, but by this singular passion from other animals, which is a lust of the mind, that by a perseverance of delight in the continued and indefatigable generation of knowledge, exceeds the short vehemence of any carnal pleasure.\n"), 270))
-                return false;
-            return true;
-        }
-    }
+	}
 	
 	namespace {
 		void RunScalarParserTest(void (*test)(std::string&, std::string&), const std::string& name, int& passed, int& total) {
@@ -975,17 +746,14 @@ namespace Test
 				ok = test();
 			} catch(const YAML::Exception& e) {
 				ok = false;
-				error = e.what();
-			} catch(const Parser::TagMismatch& e) {
-				ok = false;
-				error = e.what();
+				error = e.msg;
 			}
 			if(ok) {
 				passed++;
 			} else {
 				std::cout << "Parser test failed: " << name << "\n";
 				if(error != "")
-					std::cout << "  Caught exception: " << error << "\n";
+					std::cout << "Caught exception: " << error << "\n";
 			}
 			total++;
 		}
@@ -1153,7 +921,7 @@ namespace Test
 			} else {
 				std::cout << "Parser test failed: " << name << "\n";
 				if(error != "")
-					std::cout << "  Caught exception: " << error << "\n";
+					std::cout << "Caught exception: " << error << "\n";
 			}
 			total++;
 		}
@@ -1201,23 +969,6 @@ namespace Test
 		RunParserTest(&Parser::Bases, "bases", passed, total);
 		RunParserTest(&Parser::KeyNotFound, "key not found", passed, total);
 		RunParserTest(&Parser::DuplicateKey, "duplicate key", passed, total);
-		RunParserTest(&Parser::DefaultPlainScalarTag, "default plain scalar tag", passed, total);
-		RunParserTest(&Parser::DefaultSingleQuotedScalarTag, "default single-quoted scalar tag", passed, total);
-		RunParserTest(&Parser::ExplicitNonSpecificPlainScalarTag, "explicit, non-specific plain scalar tag", passed, total);
-		RunParserTest(&Parser::BasicLocalTag, "basic local tag", passed, total);
-		RunParserTest(&Parser::VerbatimLocalTag, "verbatim local tag", passed, total);
-		RunParserTest(&Parser::StandardShortcutTag, "standard shortcut tag", passed, total);
-		RunParserTest(&Parser::VerbatimURITag, "verbatim URI tag", passed, total);
-		RunParserTest(&Parser::DefaultPlainScalarTag, "default plain scalar tag", passed, total);
-		RunParserTest(&Parser::DefaultSequenceTag, "default sequence tag", passed, total);
-		RunParserTest(&Parser::ExplicitNonSpecificSequenceTag, "explicit, non-specific sequence tag", passed, total);
-		RunParserTest(&Parser::Infinity, "infinity", passed, total);
-		RunParserTest(&Parser::NaN, "NaN", passed, total);
-		RunParserTest(&Parser::NonConstKey, "non const key", passed, total);
-		RunParserTest(&Parser::SingleChar, "single char", passed, total);
-		RunParserTest(&Parser::QuotedNewline, "quoted newline", passed, total);
-		RunParserTest(&Parser::DoubleAsInt, "double as int", passed, total);
-		RunParserTest(&Parser::Binary, "binary", passed, total);
 		
 		RunEncodingTest(&EncodeToUtf8, false, "UTF-8, no BOM", passed, total);
 		RunEncodingTest(&EncodeToUtf8, true, "UTF-8 with BOM", passed, total);

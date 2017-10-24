@@ -1,9 +1,8 @@
 #include "tests.h"
 #include "emittertests.h"
-#include "nodetests.h"
 #include "parsertests.h"
 #include "spectests.h"
-#include "yaml-cpp/yaml.h"
+#include "yaml.h"
 #include <fstream>
 #include <sstream>
 #include <vector>

@@ -1,23 +1,19 @@
 cmake_minimum_required(VERSION 2.8)
+project(test-package CXX)
 
-file(GLOB test_headers include/[a-z]*.h)
-file(GLOB test_sources src/[a-z]*.cpp)
-file(GLOB test_old_api_sources src/old-api/[a-z]*.cpp)
-
-list(APPEND test_sources ${test_old_api_sources})
-include_directories(include)
-
-include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake) 
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
-if(CMAKE_COMPILER_IS_GNUCXX)
-    set(CMAKE_CXX_FLAGS "-Wno-deprecated-declarations ${CMAKE_CXX_FLAGS}")
-endif()
+file(GLOB test_headers [a-z]*.h)
+file(GLOB test_sources [a-z]*.cpp)
 
-add_executable(run-tests ${test_sources} ${test_headers})
-target_link_libraries(run-tests ${CONAN_LIBS})
+add_executable(${PROJECT_NAME}
+	${test_sources}
+	${test_headers}
+)
+target_link_libraries(${PROJECT_NAME} yaml-cpp)
 
 enable_testing()
-add_test(NAME yaml-reader-test 
-         COMMAND run-tests
-         WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+add_test(NAME test-all
+         COMMAND ${PROJECT_NAME}
+			 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
