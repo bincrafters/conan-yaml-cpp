@@ -1,26 +1,21 @@
-"""Recipe validation for yaml-cpp-0.2.5
-"""
+from conans import ConanFile, CMake, tools, RunEnvironment
 import os
-from conans import ConanFile, CMake
 
 
-class TestYAMLCppConan(ConanFile):
-    """Build test using target package and execute all tests
-    """
+class TestPackageConan(ConanFile):
     settings = "os", "compiler", "build_type", "arch"
     generators = "cmake"
 
     def build(self):
         cmake = CMake(self)
-        cmake.configure(build_dir=os.getcwd())
+        cmake.configure()
         cmake.build()
 
-    def imports(self):
-        self.copy(pattern="*.so*", dst="bin", src="lib")
-        self.copy(pattern="*.dll", dst="bin", src="bin")
-        self.copy(pattern="*.dylib*", dst="bin", src="lib")
-
     def test(self):
-        cmake = CMake(self)
-        cmake.configure(build_dir=os.getcwd())
-        cmake.test()
+        with tools.environment_append(RunEnvironment(self).vars):
+            if self.settings.os == "Windows":
+                self.run(os.path.join("bin","test_package"))
+            elif self.settings.os == "Macos":
+                self.run("DYLD_LIBRARY_PATH=%s %s"%(os.environ.get('DYLD_LIBRARY_PATH', ''),os.path.join("bin","test-package")))
+            else:
+                self.run("LD_LIBRARY_PATH=%s %s"%(os.environ.get('LD_LIBRARY_PATH', ''),os.path.join("bin","test-package")))
