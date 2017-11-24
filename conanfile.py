@@ -21,10 +21,6 @@ class YAMLCppConan(ConanFile):
     exports = "LICENSE"
     release_name = "%s-release-%s" % (name, version)
 
-    def configure(self):
-        if self.settings.os == "Windows" and self.settings.compiler == "Visual Studio" and self.options.shared:
-            raise Exception("YAML Cpp 0.2.5 is only supported as -static for MSVC")
-
     def source(self):
         source_url = "https://github.com/jbeder/yaml-cpp"
         tools.get("{0}/archive/release-{1}.tar.gz".format(source_url, self.version))
