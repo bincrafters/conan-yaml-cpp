@@ -2,14 +2,13 @@
 """
 import os
 from conans import ConanFile, CMake, tools
-from conans import CMake
 
 
 class YAMLCppConan(ConanFile):
     """Download YAML Cpp, build and create package
     """
     name = "yaml-cpp"
-    version = "0.3.0"
+    version = "0.5.3"
     generators = "cmake"
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False]}
