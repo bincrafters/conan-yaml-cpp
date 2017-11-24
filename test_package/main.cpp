@@ -3,9 +3,7 @@
 #include "yaml-cpp/yaml.h"
 
 int main() {
-	  YAML::Node node = YAML::Node("Hello, World!");
-		if (node.IsScalar()) {
-				std::cout << node.as<std::string>() << std::endl;
-		}
+    YAML::Node primes = YAML::Load("[2, 3, 5, 7, 11]");
+		std::cout << "Size: " << primes.size() << '\n';
 		return 0;
 }
