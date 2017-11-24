@@ -20,6 +20,7 @@ class YAMLCppConan(ConanFile):
     exports_sources = "CMakeLists.txt"
     description = "A YAML parser and emitter in C++"
     release_name = "%s-release-%s" % (name, version)
+    requires = ("Boost.Smart_Ptr/1.65.1@bincrafters/stable", "Boost.Iterator/1.65.1@bincrafters/stable")
 
     def source(self):
         source_url = "https://github.com/jbeder/yaml-cpp"
