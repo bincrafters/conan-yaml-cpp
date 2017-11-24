@@ -1,19 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
-project(test-package CXX)
+project(test-package)
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
-file(GLOB test_headers [a-z]*.h)
-file(GLOB test_sources [a-z]*.cpp)
-
-add_executable(${PROJECT_NAME}
-	${test_sources}
-	${test_headers}
-)
-target_link_libraries(${PROJECT_NAME} yaml-cpp)
+add_executable(${PROJECT_NAME} main.cpp)
+target_link_libraries(${PROJECT_NAME} ${CONAN_LIBS})
 
 enable_testing()
 add_test(NAME test-all
          COMMAND ${PROJECT_NAME}
-			 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+			   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
