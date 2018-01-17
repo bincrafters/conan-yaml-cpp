@@ -1,9 +1,23 @@
 #include <string>
+#include <sstream>
 #include <iostream>
 #include "yaml-cpp/yaml.h"
 
 int main() {
-    YAML::Node primes = YAML::Load("[2, 3, 5, 7, 11]");
-		std::cout << "Size: " << primes.size() << '\n';
+		std::string input =
+						"- eggs\n"
+						"- bread\n"
+						"- milk";
+
+		std::stringstream stream(input);
+		YAML::Parser parser(stream);
+		YAML::Node doc;
+		parser.GetNextDocument(doc);
+		for (int i = 0; i < 3; ++i) {
+			  std::string out;
+				doc[i] >> out;
+				std::cout << out << '\n';
+		}
+
 		return 0;
 }

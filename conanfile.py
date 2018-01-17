@@ -7,7 +7,7 @@ import os
 
 class YAMLCppConan(ConanFile):
     name = "yaml-cpp"
-    version = "0.5.3"
+    version = "0.3.0"
     url = "https://github.com/uilianries/conan-yaml-cpp"
     description = "A YAML parser and emitter in C++"
     author = "Uilian Ries <uilianries@gmail.com>"
@@ -39,7 +39,7 @@ class YAMLCppConan(ConanFile):
         cmake.build()
 
     def package(self):
-        self.copy(pattern="LICENSE", dst=".", src="sources")
+        self.copy(pattern="license.txt", dst=".", src="sources")
         self.copy(pattern="*.h", dst="include", src=os.path.join("sources", "include"))
         self.copy(pattern="lib%s.a" % self.name, dst="lib", src="lib", keep_path=False)
         self.copy(pattern="lib%s.so*" % self.name, dst="lib", src="lib", keep_path=False)
