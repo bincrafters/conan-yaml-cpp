@@ -1,26 +1,27 @@
-"""Conan recipe for YAML Cpp
-"""
-import os
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 from conans import ConanFile, CMake, tools
+import os
 
 
 class YAMLCppConan(ConanFile):
-    """Download YAML Cpp, build and create package
-    """
     name = "yaml-cpp"
     version = "0.5.3"
+    url = "https://github.com/uilianries/conan-yaml-cpp"
+    description = "A YAML parser and emitter in C++"
+    author = "Uilian Ries <uilianries@gmail.com>"
+    license = "MIT"
+    exports = "LICENSE.md"
+    exports_sources = "CMakeLists.txt"
     generators = "cmake"
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False]}
     default_options = "shared=False"
-    url = "https://github.com/uilianries/conan-yaml-cpp"
-    author = "Uilian Ries <uilianries@gmail.com>"
-    license = "MIT"
-    exports = "LICENSE"
-    exports_sources = "CMakeLists.txt"
-    description = "A YAML parser and emitter in C++"
-    release_name = "%s-release-%s" % (name, version)
-    requires = ("Boost.Smart_Ptr/1.65.1@bincrafters/stable", "Boost.Iterator/1.65.1@bincrafters/stable")
+    requires = (
+        "Boost.Smart_Ptr/1.65.1@bincrafters/stable", 
+        "Boost.Iterator/1.65.1@bincrafters/stable"
+    )
 
     def source(self):
         source_url = "https://github.com/jbeder/yaml-cpp"
