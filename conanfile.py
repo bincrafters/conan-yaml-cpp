@@ -19,8 +19,8 @@ class YAMLCppConan(ConanFile):
     options = {"shared": [True, False]}
     default_options = "shared=False"
     requires = (
-        "Boost.Smart_Ptr/1.65.1@bincrafters/stable", 
-        "Boost.Iterator/1.65.1@bincrafters/stable"
+        "Boost.Smart_Ptr/[>=1.65.1]@bincrafters/stable", 
+        "Boost.Iterator/[>=1.65.1]@bincrafters/stable"
     )
 
     def source(self):
