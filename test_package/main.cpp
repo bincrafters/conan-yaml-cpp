@@ -1,11 +1,7 @@
 #include <string>
 #include <sstream>
 #include <iostream>
-<<<<<<< HEAD
 #include "yaml.h"
-=======
-#include "yaml-cpp/yaml.h"
->>>>>>> testing/0.3.0
 
 int main() {
 		std::string input =
@@ -24,8 +20,4 @@ int main() {
 		}
 
 		return 0;
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> testing/0.3.0
