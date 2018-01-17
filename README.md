@@ -1,49 +1,47 @@
-[![Build Status](https://travis-ci.org/bincrafters/conan-yaml-cpp.svg?branch=release/0.2.5)](https://travis-ci.org/bincrafters/conan-yaml-cpp) [![Build status](https://ci.appveyor.com/api/projects/status/x0dv3a3l6koq8j3a/branch/release/0.2.5?svg=true)](https://ci.appveyor.com/project/bincrafters/conan-yaml-cpp/branch/release/0.2.5) [![badge](https://img.shields.io/badge/conan.io-yaml--cpp%2F0.2.5-green.svg?logo=data:image/png;base64%2CiVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAMAAAAolt3jAAAA1VBMVEUAAABhlctjlstkl8tlmMtlmMxlmcxmmcxnmsxpnMxpnM1qnc1sn85voM91oM11oc1xotB2oc56pNF6pNJ2ptJ8ptJ8ptN9ptN8p9N5qNJ9p9N9p9R8qtOBqdSAqtOAqtR%2BrNSCrNJ/rdWDrNWCsNWCsNaJs9eLs9iRvNuVvdyVv9yXwd2Zwt6axN6dxt%2Bfx%2BChyeGiyuGjyuCjyuGly%2BGlzOKmzOGozuKoz%2BKqz%2BOq0OOv1OWw1OWw1eWx1eWy1uay1%2Baz1%2Baz1%2Bez2Oe02Oe12ee22ujUGwH3AAAAAXRSTlMAQObYZgAAAAFiS0dEAIgFHUgAAAAJcEhZcwAACxMAAAsTAQCanBgAAAAHdElNRQfgBQkREyOxFIh/AAAAiklEQVQI12NgAAMbOwY4sLZ2NtQ1coVKWNvoc/Eq8XDr2wB5Ig62ekza9vaOqpK2TpoMzOxaFtwqZua2Bm4makIM7OzMAjoaCqYuxooSUqJALjs7o4yVpbowvzSUy87KqSwmxQfnsrPISyFzWeWAXCkpMaBVIC4bmCsOdgiUKwh3JojLgAQ4ZCE0AMm2D29tZwe6AAAAAElFTkSuQmCC)](http://www.conan.io/source/yaml-cpp/0.2.5/bincrafters/stable)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+## Package Status
 
-# A YAML parser and emitter in C++
+| Bintray | Appveyor | Travis |
+|---------|-----------|--------|
+|[ ![Download](https://api.bintray.com/packages/bincrafters/public-conan/yaml-cpp%3Abincrafters/images/download.svg) ](https://bintray.com/bincrafters/public-conan/yaml-cpp%3Abincrafters/_latestVersion)|[![Build status](https://ci.appveyor.com/api/projects/status/github/bincrafters/conan-yaml-cpp?svg=true)](https://ci.appveyor.com/project/BinCrafters/conan-yaml-cpp)|[![Build Status](https://travis-ci.org/bincrafters/conan-yaml-cpp.svg?branch=stable%2F0.5.3)](https://travis-ci.org/bincrafters/conan-yaml-cpp)|
 
-[Conan.io](https://conan.io) package for [yaml-cpp](https://github.com/jbeder/yaml-cpp) project
+## Conan.io Information
 
-The packages generated with this **conanfile** can be found in [conan.io](https://bintray.com/bincrafters/public-conan/yaml-cpp%3Abincrafters).
+Bincrafters packages can be found in the following public Conan repository:
 
-## Build packages
+[Bincrafters Public Conan Repository on Bintray](https://bintray.com/bincrafters/public-conan)
 
-Download conan client from [Conan.io](https://conan.io) and run:
+*Note: You can click the "Set Me Up" button on the Bintray page above for instructions on using packages from this repository.*
 
-    $ python build.py
+## Issues
 
-If your are in Windows you should run it from a VisualStudio console in order to get "mc.exe" in path.
+If you wish to report an issue or make a request for a Bincrafters package, please do so here:
 
-## Upload packages to server
+[Bincrafters Community Issues](https://github.com/bincrafters/community/issues)
 
-    $ conan upload yaml-cpp/0.2.5@bincrafters/stable --all
+## General Information
 
-## Reuse the packages
+This GIT repository is managed by the Bincrafters team and holds files related to Conan.io.  For detailed information about Bincrafters and Conan.io, please visit the following resources:
 
-### Basic setup
+[Bincrafters Wiki - Common README](https://github.com/bincrafters/community/wiki/Common-README.md)
 
-    $ conan install yaml-cpp/0.2.5@bincrafters/stable
+[Bincrafters Technical Documentation](http://bincrafters.readthedocs.io/en/latest/)
 
-### Project setup
+[Bincrafters Blog](https://bincrafters.github.io)
 
-If you handle multiple dependencies in your project is better to add a *conanfile.txt*
+## License Information
 
-    [requires]
-    yaml-cpp/0.2.5@bincrafters/stable
+Bincrafters packages are hosted on [Bintray](https://bintray.com) and contain Open-Source software which is licensed by the software's maintainers and NOT Bincrafters.  For each Open-Source package published by Bincrafters, the packaging process obtains the required license files along with the original source files from the maintainer, and includes these license files in the generated Conan packages.
 
-    [options]
-    yaml-cpp:shared=True # False
+The contents of this GIT repository are completely separate from the software being packaged and therefor licensed separately.  The license for all files contained in this GIT repository are defined in the [LICENSE.md](LICENSE.md) file in this repository.  The licenses included with all Conan packages published by Bincrafters can be found in the Conan package directories in the following locations, relative to the Conan Cache root (`~/.conan` by default):
 
-    [generators]
-    txt
-    cmake
+### License(s) for packaged software:
 
-Complete the installation of requirements for your project running:</small></span>
+    ~/.conan/data/<pkg_name>/<pkg_version>/bincrafters/package/<random_package_id>/license/<LICENSE_FILES_HERE>
 
-    conan install .
+*Note :   The most common filenames for OSS licenses are `LICENSE` AND `COPYING` without file extensions.*
+	
+### License for Bincrafters recipe:
 
-Project setup installs the library (and all his dependencies) and generates the files *conanbuildinfo.txt* and *conanbuildinfo.cmake* with all the paths and variables that you need to link with your dependencies.
+    ~/.conan/data/<pkg_name>/<pkg_version>/bincrafters/export/LICENSE.md
 
-### License
-[MIT](LICENSE)
+	
