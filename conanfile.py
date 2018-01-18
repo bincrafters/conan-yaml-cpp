@@ -34,7 +34,7 @@ class YAMLCppConan(ConanFile):
         cmake.definitions["YAML_CPP_BUILD_CONTRIB"] = True
         cmake.definitions["YAML_CPP_BUILD_TOOLS"] = False
         if self.settings.os == "Windows" and self.options.shared:
-            cmake.definitions["BUILD_SHARED_LIBS"] = True
+            cmake.definitions["CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS"] = True
         cmake.configure()
         cmake.build()
 
