@@ -1,7 +1,4 @@
 cmake_minimum_required(VERSION 2.8)
 project(conan-yaml-cpp)
 
-include(conanbuildinfo.cmake)
-CONAN_BASIC_SETUP()
-
-add_subdirectory(sources)
+add_subdirectory(${CMAKE_BINARY_DIR}/sources)

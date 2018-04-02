@@ -17,11 +17,7 @@ class YAMLCppConan(ConanFile):
     generators = "cmake"
     settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False]}
-    default_options = "shared=False"
-    requires = (
-        "Boost.Smart_Ptr/[>=1.65.1]@bincrafters/stable", 
-        "Boost.Iterator/[>=1.65.1]@bincrafters/stable"
-    )
+    default_options = "shared=True"
 
     def source(self):
         source_url = "https://github.com/jbeder/yaml-cpp"
@@ -41,11 +37,11 @@ class YAMLCppConan(ConanFile):
     def package(self):
         self.copy(pattern="license.txt", dst=".", src="sources")
         self.copy(pattern="*.h", dst="include", src=os.path.join("sources", "include"))
-        self.copy(pattern="lib%s.a" % self.name, dst="lib", src="lib", keep_path=False)
-        self.copy(pattern="lib%s.so*" % self.name, dst="lib", src="lib", keep_path=False)
-        self.copy(pattern="lib%s*.dylib" % self.name, dst="lib", src="lib", keep_path=False)
-        self.copy(pattern="*%s*.lib" % self.name, dst="lib", src="lib", keep_path=False)
-        self.copy(pattern="%s.dll" % self.name, dst="bin", src="bin", keep_path=False)
+        self.copy(pattern="lib%s.a" % self.name, dst="lib", src="sources", keep_path=False)
+        self.copy(pattern="lib%s.so*" % self.name, dst="lib", src="sources", keep_path=False, symlinks=True)
+        self.copy(pattern="lib%s*.dylib" % self.name, dst="lib", src="sources", keep_path=False)
+        self.copy(pattern="*%s*.lib" % self.name, dst="lib", src="sources", keep_path=False)
+        self.copy(pattern="%s.dll" % self.name, dst="bin", src="sources", keep_path=False)
 
     def package_info(self):
         self.cpp_info.libs = tools.collect_libs(self)
