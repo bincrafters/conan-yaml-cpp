@@ -16,7 +16,7 @@ class YAMLCppConan(ConanFile):
     exports = "LICENSE.md"
     exports_sources = "CMakeLists.txt"
     generators = "cmake"
-    settings = "os", "arch", "compiler", "build_type"
+    settings = "cppstd", "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = "shared=False", "fPIC=True"
     source_subfolder = "source_subfolder"
@@ -25,6 +25,10 @@ class YAMLCppConan(ConanFile):
         tools.get("{0}/archive/{1}-{2}.tar.gz".format(self.homepage, self.name, self.version))
         extracted_dir = self.name + "-" + self.name + "-" + self.version
         os.rename(extracted_dir, self.source_subfolder)
+
+    def configure(self):
+        if not self.settings.cppstd:
+            self.settings.cppstd = 11
 
     def configure_cmake(self):
         cmake = CMake(self)
