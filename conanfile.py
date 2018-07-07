@@ -46,6 +46,6 @@ class YAMLCppConan(ConanFile):
         cmake.install()
 
     def package_info(self):
-        self.cpp_info.includedirs = ["yaml-cpp", ]
         self.cpp_info.libs = tools.collect_libs(self)
-        self.cpp_info.stdcpp = 11
+        if self.settings.os == "Linux":
+            self.cpp_info.libs.append('m')

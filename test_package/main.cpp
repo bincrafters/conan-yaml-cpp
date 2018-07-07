@@ -1,10 +1,9 @@
-#include <yaml-cpp/yaml.h>
-
 #include <string>
 #include <iostream>
 
+#include "yaml-cpp/yaml.h"
+
 void parsing_nodes() {
-}
     YAML::Node primes = YAML::Load("[2, 3, 5, 7, 11]");
     std::cout << "Size: " << primes.size() << '\n';
 }
@@ -17,7 +16,7 @@ void building_nodes() {
     emitter << YAML::Key << "position";
     emitter << YAML::Value << "LF";
     emitter << YAML::EndMap;
-    std::cout << emitter.c_str();
+    std::cout << emitter.c_str() << '\n';
 }
 
 int main() {
