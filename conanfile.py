@@ -9,28 +9,28 @@ class YAMLCppConan(ConanFile):
     name = "yaml-cpp"
     version = "0.6.2"
     url = "https://github.com/uilianries/conan-yaml-cpp"
+    homepage = "https://github.com/jbeder/yaml-cpp"
     description = "A YAML parser and emitter in C++"
-    author = "Uilian Ries <uilianries@gmail.com>"
+    author = "Bincrafters <bincrafters@gmail.com>"
     license = "MIT"
     exports = "LICENSE.md"
     exports_sources = "CMakeLists.txt"
     generators = "cmake"
     settings = "os", "arch", "compiler", "build_type"
-    options = {"shared": [True, False]}
-    default_options = "shared=False"
+    options = {"shared": [True, False], "fPIC": [True, False]}
+    default_options = "shared=False", "fPIC=True"
+    source_subfolder = "source_subfolder"
 
     def source(self):
-        source_url = "https://github.com/jbeder/yaml-cpp"
-        tools.get("{0}/archive/yaml-cpp-{1}.tar.gz".format(source_url, self.version))
+        tools.get("{0}/archive/{1}-{2}.tar.gz".format(self.homepage, self.name, self.version))
         extracted_dir = self.name + "-" + self.name + "-" + self.version
-        os.rename(extracted_dir, "sources")
+        os.rename(extracted_dir, self.source_subfolder)
 
     def configure_cmake(self):
         cmake = CMake(self)
         cmake.definitions["YAML_CPP_BUILD_TESTS"] = False
         cmake.definitions["YAML_CPP_BUILD_CONTRIB"] = True
         cmake.definitions["YAML_CPP_BUILD_TOOLS"] = False
-        cmake.definitions["BUILD_SHARED_LIBS"] = self.options.shared
         if self.settings.compiler == "Visual Studio":
             cmake.definitions["MSVC_SHARED_RT"] = "MT" in self.settings.compiler.runtime
         cmake.configure()
@@ -40,18 +40,10 @@ class YAMLCppConan(ConanFile):
         cmake = self.configure_cmake()
         cmake.build()
 
-    def install(self):
+    def package(self):
+        self.copy(pattern="LICENSE", dst="licenses", src=self.source_subfolder)
         cmake = self.configure_cmake()
         cmake.install()
-
-    def package(self):
-        self.copy(pattern="LICENSE", dst=".", src="sources")
-        self.copy(pattern="*.h", dst="include", src=os.path.join("sources", "include"))
-        self.copy(pattern="lib%s.a" % self.name, dst="lib", src="lib", keep_path=False)
-        self.copy(pattern="lib%s.so*" % self.name, dst="lib", src="lib", keep_path=False)
-        self.copy(pattern="lib%s*.dylib" % self.name, dst="lib", src="lib", keep_path=False)
-        self.copy(pattern="*%s*.lib" % self.name, dst="lib", src="lib", keep_path=False)
-        self.copy(pattern="%s.dll" % self.name, dst="bin", src="bin", keep_path=False)
 
     def package_info(self):
         self.cpp_info.includedirs = ["yaml-cpp", ]
