@@ -36,7 +36,8 @@ class YAMLCppConan(ConanFile):
         cmake.definitions["YAML_CPP_BUILD_CONTRIB"] = True
         cmake.definitions["YAML_CPP_BUILD_TOOLS"] = False
         if self.settings.compiler == "Visual Studio":
-            cmake.definitions["MSVC_SHARED_RT"] = "MT" in self.settings.compiler.runtime
+            cmake.definitions["MSVC_SHARED_RT"] = "MD" in self.settings.compiler.runtime
+            cmake.definitions["MSVC_STHREADED_RT"] = "MT" in self.settings.compiler.runtime
         cmake.configure()
         return cmake
 
