@@ -23,22 +23,19 @@ class YAMLCppConan(ConanFile):
     build_subfolder = "build_subfolder"
 
     def source(self):
-        source_url = "https://github.com/jbeder/yaml-cpp"
-        tools.get("{0}/archive/release-{1}.tar.gz".format(source_url, self.version))
+        tools.get("{0}/archive/release-{1}.tar.gz".format(self.homepage, self.version))
         extracted_dir = self.name + "-release-" + self.version
         os.rename(extracted_dir, self.source_subfolder)
 
     def config_options(self):
         if self.settings.os == "Windows":
-            del self.options.fPIC
+            self.options.remove("fPIC")
 
     def configure_cmake(self):
         cmake = CMake(self)
         cmake.definitions["YAML_CPP_BUILD_TOOLS"] = False
         if self.settings.os == "Windows":
             cmake.definitions["CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS"] = self.options.shared
-        else:
-            cmake.definitions["CMAKE_POSITION_INDEPENDENT_CODE"] = self.options.fPIC
         cmake.configure(build_folder=self.build_subfolder)
         return cmake
 
@@ -47,7 +44,7 @@ class YAMLCppConan(ConanFile):
         cmake.build()
 
     def package(self):
-        self.copy(pattern="license.txt", dst=".", src=self.source_subfolder)
+        self.copy(pattern="license.txt", dst="licenses", src=self.source_subfolder)
         cmake = self.configure_cmake()
         cmake.install()
 
