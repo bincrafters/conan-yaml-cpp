@@ -12,7 +12,6 @@ class YAMLCppConan(ConanFile):
     homepage = "https://github.com/jbeder/yaml-cpp"
     author = "Bincrafters <bincrafters@gmail.com>"
     description = "A YAML parser and emitter in C++"
-    author = "Uilian Ries <uilianries@gmail.com>"
     license = "MIT"
     exports = "LICENSE.md"
     exports_sources = "CMakeLists.txt"
