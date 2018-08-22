@@ -4,4 +4,4 @@ project(conan-yaml-cpp)
 include(conanbuildinfo.cmake)
 CONAN_BASIC_SETUP()
 
-add_subdirectory(sources)
+add_subdirectory(source_subfolder)

@@ -21,6 +21,8 @@ class YAMLCppConan(ConanFile):
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = "shared=False", "fPIC=True"
     requires = "boost/1.66.0@conan/stable"
+    source_subfolder = "source_subfolder"
+    build_subfolder = "build_subfolder"
 
     def config_options(self):
         if self.settings.os == 'Windows':
@@ -29,7 +31,7 @@ class YAMLCppConan(ConanFile):
     def source(self):
         tools.get("{0}/archive/release-{1}.tar.gz".format(self.homepage, self.version))
         extracted_dir = self.name + "-release-" + self.version
-        os.rename(extracted_dir, "sources")
+        os.rename(extracted_dir, self.source_subfolder)
 
     def configure_cmake(self):
         cmake = CMake(self)
@@ -37,7 +39,7 @@ class YAMLCppConan(ConanFile):
         cmake.definitions["YAML_CPP_BUILD_TOOLS"] = False
         if self.settings.os == "Windows" and self.options.shared:
             cmake.definitions["BUILD_SHARED_LIBS"] = True
-        cmake.configure()
+        cmake.configure(build_folder=self.build_subfolder)
         return cmake
 
     def build(self):
@@ -45,7 +47,7 @@ class YAMLCppConan(ConanFile):
         cmake.build()
 
     def package(self):
-        self.copy(pattern="LICENSE", dst=".", src="sources")
+        self.copy(pattern="LICENSE", dst="licenses", src=self.source_subfolder)
         cmake = self.configure_cmake()
         cmake.install()
 
