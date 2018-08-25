@@ -31,6 +31,8 @@ class YAMLCppConan(ConanFile):
             self.options.remove("fPIC")
 
     def configure(self):
+        if self.settings.compiler == "Visual Studio" and self.settings.compiler.version == "12":
+            raise Exception("Visual Studio 12 not supported: Library needs C++11 standard")
         if not self.settings.cppstd:
             self.settings.cppstd = 11
 
