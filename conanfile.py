@@ -16,7 +16,7 @@ class YAMLCppConan(ConanFile):
     exports = "LICENSE.md"
     exports_sources = "CMakeLists.txt"
     generators = "cmake"
-    settings = "cppstd", "os", "arch", "compiler", "build_type"
+    settings = "os", "arch", "compiler", "build_type"
     options = {"shared": [True, False], "fPIC": [True, False]}
     default_options = "shared=False", "fPIC=True"
     source_subfolder = "source_subfolder"
@@ -33,8 +33,6 @@ class YAMLCppConan(ConanFile):
     def configure(self):
         if self.settings.compiler == "Visual Studio" and self.settings.compiler.version == "12":
             raise Exception("Visual Studio 12 not supported: Library needs C++11 standard")
-        if not self.settings.cppstd:
-            self.settings.cppstd = 11
 
     def configure_cmake(self):
         cmake = CMake(self)
@@ -59,3 +57,5 @@ class YAMLCppConan(ConanFile):
         self.cpp_info.libs = tools.collect_libs(self)
         if self.settings.os == "Linux":
             self.cpp_info.libs.append('m')
+        if self.settings.compiler == 'Visual Studio':
+            self.cpp_info.defines.append('_NOEXCEPT=noexcept')
