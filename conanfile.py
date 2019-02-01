@@ -27,7 +27,7 @@ class YAMLCppConan(ConanFile):
         os.rename(extracted_dir, self.source_subfolder)
 
     def config_options(self):
-        if self.settings == "Windows":
+        if self.settings.os == "Windows":
             self.options.remove("fPIC")
 
     def configure(self):
